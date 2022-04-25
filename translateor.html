@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    #overview {
+      width: 90%;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid black;
+
+      background-image: url(https://www.docusign.com/sites/default/files/styles/hero_standard__2x_mobile/public/convert-word-document-fillable-form.jpg?itok=FIFWVj0d&timestamp=1605051701);
+    }
+    #overview > div {
+      margin: 3%;
+      height: 300px;
+      width: 48%;
+      border: 1px solid black;
+      background-color: aliceblue;
+      /*  background-image: url(https://www.docusign.com/sites/default/files/styles/hero_standard__2x_mobile/public/convert-word-document-fillable-form.jpg?itok=FIFWVj0d&timestamp=1605051701); */
+    }
+    #inputText {
+      width: 90%;
+      margin-left: 2em;
+      height: 220px;
+      /* border: 1px solid red; */
+    }
+    #output_value {
+      width: 90%;
+      margin-left: 1.5em;
+      border: 1px solid black;
+      height: 220px;
+    }
+    .box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .box #inp_lang,
+    #out_lang {
+      width: 40%;
+      height: 30px;
+      margin: 2%;
+    }
+    #voice {
+      /* border: 1px solid black; */
+      margin-top: -1rem;
+    }
+    #voice :hover {
+      cursor: pointer;
+    }
+  </style>
+  <body>
+    <div id="overview">
+      <div id="input">
+        <div class="box">
+          <select id="inp_lang">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+          </select>
+        </div>
+
+        <!-- <button type="button" onclick="trasnlate()">button</button> -->
+        <textarea
+          name="input_value"
+          placeholder="Enter Text ..."
+          id="inputText"
+          oninput="trasnlate()"
+        ></textarea>
+        <div>
+          <svg id="voice" width="1.5em" height="2em" viewBox="0 0 24 30">
+            <path
+              fill="currentColor"
+              d="M12 15c1.66 0 2.99-1.34 2.99-3L15 6c0-1.66-1.34-3-3-3S9 4.34 9 6v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 15 6.7 12H5c0 3.42 2.72 6.23 6 6.72V22h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"
+            />
+          </svg>
+        </div>
+      </div>
+      <div id="output">
+        <div class="box">
+          <select id="out_lang">
+            <option value="hi">Hindi</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <div id="output_value"></div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  //helper function to get input value
+  function read(id) {
+    return document.querySelector(id).value;
+  }
+
+  let trasnlate = async () => {
+    try {
+      let input = read("#inputText");
+      let input_lang = read("#inp_lang");
+      let output_lang = read("#out_lang");
+
+      const res = await fetch(`https://libretranslate.de/translate`, {
+        method: "POST",
+        body: JSON.stringify({
+          q: input,
+          source: input_lang,
+          target: output_lang,
+          format: "text",
+        }),
+        //additional information about the request that server might need too know
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    
+      const data = await res.json();
+      showTooutput(data);
+      console.log(data);
+     
+      // document.querySelector("#output").innerHTML = data.translatedText;
+    } catch (error) {
+      console.log("yes",error);
+      input.innerHTML="love"
+    }
+  };
+  //properties inside data
+  let showTooutput = ({ translatedText }) => {
+   
+    document.querySelector("#output_value").innerHTML = translatedText;
+    
+  };
+
+ 
+</script>
